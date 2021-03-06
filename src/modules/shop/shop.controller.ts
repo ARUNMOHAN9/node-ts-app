@@ -12,6 +12,19 @@ const getProducts: RequestHandler = async (req, res, next) => {
     });
 }
 
+const getProduct: RequestHandler = async (req, res, next) => {
+
+    const prodId = req.params.productId;
+
+    const product = await Product.findById(prodId);
+
+    res.render('shop/product-detail', {
+        product: product,
+        pageTitle: product?.title,
+        path: '/products'
+    });
+}
+
 const getIndex: RequestHandler = async (req, res, next) => {
 
     const products = await Product.fetchAll();
@@ -46,6 +59,7 @@ const getCheckout: RequestHandler = async (req, res, next) => {
 
 const ShopCtrl = {
     getProducts: getProducts,
+    getProduct: getProduct,
     getIndex: getIndex,
     getCart: getCart,
     getOrders: getOrders,

@@ -24,6 +24,7 @@ class Product {
     imageUrl = '';
     description = '';
     price = 0;
+    id = Math.random().toString();
 
     constructor(product: IProduct) {
         this.title = product.title;
@@ -44,6 +45,12 @@ class Product {
 
     static fetchAll(): Promise<Product[]> {
         return readProdJson;
+    }
+
+    static async findById(id: string) {
+        const products = await readProdJson;
+
+        return products.find(product => product.id === id) || null;
     }
 }
 
