@@ -21,9 +21,15 @@ const readProdJson = new Promise<Product[]>((resolve, reject) => {
 class Product {
 
     title = '';
+    imageUrl = '';
+    description = '';
+    price = 0;
 
     constructor(product: IProduct) {
         this.title = product.title;
+        this.imageUrl = product.imageUrl;
+        this.description = product.description;
+        this.price = product.price;
     }
 
     async save() {
