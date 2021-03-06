@@ -5,6 +5,19 @@ import fs from 'fs';
 import rootDir from '../helpers/path';
 import { IProduct } from '../interfaces/product.interface';
 
+const productsPath = path.join(rootDir, 'src', 'data', 'products.json');
+
+const readProdJson = new Promise<Product[]>((resolve, reject) => {
+    fs.readFile(productsPath, (err, fileContent) => {
+        let products = [];
+        if (!err) {
+            products = JSON.parse(fileContent.toString());
+            resolve(products);
+        }
+        resolve([]);
+    });
+});
+
 class Product {
 
     title = '';
@@ -13,38 +26,18 @@ class Product {
         this.title = product.title;
     }
 
-    save() {
+    async save() {
+        const products = await readProdJson;
 
-        const p = path.join(rootDir, 'src', 'data', 'products.json');
-
-        fs.readFile(p, (err, fileContent) => {
-            let products = [];
-            if (!err) {
-                products = JSON.parse(fileContent.toString());
-            }
-            products.push(this);
-
-            fs.writeFile(p, JSON.stringify(products), (err) => {
-                console.log(err);
-            });
+        products.push(this);
+        fs.writeFile(productsPath, JSON.stringify(products), (err) => {
+            console.log(err);
         });
+
     }
 
     static fetchAll(): Promise<Product[]> {
-        const p = path.join(rootDir, 'src', 'data', 'products.json');
-
-        const promise = new Promise<Product[]>((resolve, reject) => {
-            fs.readFile(p, (err, fileContent) => {
-                let products = [];
-                if (!err) {
-                    products = JSON.parse(fileContent.toString());
-                    resolve(products);
-                }
-                resolve([]);
-            });
-        });
-
-        return promise;
+        return readProdJson;
     }
 }
 
