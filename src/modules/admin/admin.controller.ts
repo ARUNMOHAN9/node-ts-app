@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express';
-
-export const products: any[] = [];
+import Product from '../../utilities/models/product.model';
 
 const getAddProduct: RequestHandler = (req, res, next) => {
     res.render('add-product', {
@@ -13,7 +12,10 @@ const getAddProduct: RequestHandler = (req, res, next) => {
 }
 
 const postAddProduct: RequestHandler = (req, res, next) => {
-    products.push({ title: req.body.title });
+
+    const product = new Product({ title: req.body.title });
+    product.save();
+
     res.redirect('/');
 }
 

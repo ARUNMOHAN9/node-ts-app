@@ -1,12 +1,12 @@
 import { RequestHandler } from 'express';
-import { products } from '../admin/admin.controller';
+import Product from '../../utilities/models/product.model';
 
 const getProducts: RequestHandler = (req, res, next) => {
     res.render('shop', {
-        prods: products,
+        prods: Product.fetchAll(),
         pageTitle: 'Shop',
         path: '/',
-        hasProducts: products.length > 0,
+        hasProducts: Product.fetchAll().length > 0,
         activeShop: true,
         productCSS: true
     });
