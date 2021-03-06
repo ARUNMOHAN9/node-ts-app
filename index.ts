@@ -9,15 +9,17 @@ import rootDir from './src/utilities/helpers/path';
 const app = express();
 const PORT = 8000;
 
-app.use(express.urlencoded({ extended: true }));
+app.set('view engine', 'ejs');
+app.set('views', 'src/views');
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(rootDir, 'public')));
 
 app.use('/admin', adminRouter);
 app.use(shopRouter);
 
 app.use("*", (req, res, next) => {
-    res.status(HttpStatus.NOT_FOUND).sendFile(path.join(rootDir, 'src', 'views', '404.html'));
+    res.status(HttpStatus.NOT_FOUND).render('404', { pageTitle: 'Page Not Found', path: '' });
 });
 
 app.listen(PORT, () => {

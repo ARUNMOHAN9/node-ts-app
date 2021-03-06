@@ -4,12 +4,20 @@ import rootDir from '../../utilities/helpers/path';
 
 const router = Router();
 
+export const products: any[] = [];
+
 router.get('/add-product', (req, res, next) => {
-    res.sendFile(path.join(rootDir, 'src', 'views', 'add-product.html'));
+    res.render('add-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/add-product',
+        formsCSS: true,
+        productCSS: true,
+        activeAddProduct: true
+    });
 });
 
-router.post('/product', (req, res, next) => {
-    console.log(req.body);
+router.post('/add-product', (req, res, next) => {
+    products.push({ title: req.body.title });
     res.redirect('/');
 });
 
