@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import Cart from '../../utilities/models/cart.model';
 import Product from '../../utilities/models/product.model';
 
 const getProducts: RequestHandler = async (req, res, next) => {
@@ -43,6 +44,18 @@ const getCart: RequestHandler = async (req, res, next) => {
     });
 };
 
+const postCart: RequestHandler = async (req, res, next) => {
+    const prodId = req.body.productId;
+
+    const product = await Product.findById(prodId);
+    Cart.addProduct(prodId, product!);
+    res.redirect('/cart');
+    // res.render('shop/cart', {
+    //     path: '/cart',
+    //     pageTitle: 'Your Cart'
+    // });
+};
+
 const getOrders: RequestHandler = async (req, res, next) => {
     res.render('shop/orders', {
         path: '/orders',
@@ -62,6 +75,7 @@ const ShopCtrl = {
     getProduct: getProduct,
     getIndex: getIndex,
     getCart: getCart,
+    postCart: postCart,
     getOrders: getOrders,
     getCheckout: getCheckout
 }
