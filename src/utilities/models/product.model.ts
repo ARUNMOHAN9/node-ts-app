@@ -1,23 +1,7 @@
 
-import path from 'path';
-import fs from 'fs';
-
-import rootDir from '../helpers/path';
+import { FieldPacket, RowDataPacket } from 'mysql2';
+import db from '../helpers/database';
 import { IProduct } from '../interfaces/product.interface';
-import Cart from './cart.model';
-
-const productsPath = path.join(rootDir, 'src', 'data', 'products.json');
-
-const readProdJson = new Promise<Product[]>((resolve, reject) => {
-    fs.readFile(productsPath, (err, fileContent) => {
-        let products = [];
-        if (!err) {
-            products = JSON.parse(fileContent.toString());
-            resolve(products);
-        }
-        resolve([]);
-    });
-});
 
 class Product {
 
@@ -36,50 +20,23 @@ class Product {
     }
 
     async save() {
-        const products = await readProdJson;
-
-        return new Promise((resolve, reject) => {
-
-            if (this.id) {
-                const existingProductIndex = products.findIndex(product => product.id === this.id);
-                const updatedProducts = [...products];
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(productsPath, JSON.stringify(updatedProducts), (err) => {
-                    console.log(err);
-                });
-                resolve(true);
-            } else {
-                this.id = Math.random().toString();
-                products.push(this);
-                fs.writeFile(productsPath, JSON.stringify(products), (err) => {
-                    console.log(err);
-                });
-                resolve(true);
-            }
-        });
+        return db.execute(`
+            INSERT INTO products
+            (title, price, imageUrl, description)
+            VALUES (?, ?, ?, ?)
+        `, [this.title, this.price, this.imageUrl, this.description]);
     }
 
-    static fetchAll(): Promise<Product[]> {
-        return readProdJson;
+    static fetchAll() {
+        return db.execute('SELECT * FROM products');
     }
 
-    static async findById(id: string) {
-        const products = await readProdJson;
-
-        return products.find(product => product.id === id) || null;
+    static async findById(id: number): Promise<[RowDataPacket[], FieldPacket[]]> {
+        return db.execute('SELECT * FROM products where id = ?', [id]);
     }
 
     static async deleteById(id: string) {
-        const products = await readProdJson;
 
-        const updatedProducts = products.filter(product => product.id !== id);
-        fs.writeFile(productsPath, JSON.stringify(updatedProducts), (err) => {
-            if (!err) {
-                Cart.deleteProduct(id);
-            } else {
-                console.log(err);
-            }
-        });
     }
 }
 

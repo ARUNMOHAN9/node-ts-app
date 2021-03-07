@@ -4,37 +4,50 @@ import Product from '../../utilities/models/product.model';
 
 const getProducts: RequestHandler = async (req, res, next) => {
 
-    const products = await Product.fetchAll();
+    try {
+        const [products, fieldData] = await Product.fetchAll();
 
-    res.render('shop/product-list', {
-        prods: products,
-        pageTitle: 'All Products',
-        path: '/products'
-    });
+        res.render('shop/product-list', {
+            prods: products,
+            pageTitle: 'All Products',
+            path: '/products'
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
 }
 
 const getProduct: RequestHandler = async (req, res, next) => {
 
-    const prodId = req.params.productId;
+    try {
+        const prodId = +req.params.productId;
 
-    const product = await Product.findById(prodId);
+        const [product] = await Product.findById(prodId);
 
-    res.render('shop/product-detail', {
-        product: product,
-        pageTitle: product?.title,
-        path: '/products'
-    });
+        res.render('shop/product-detail', {
+            product: product[0],
+            pageTitle: product[0].title,
+            path: '/products'
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const getIndex: RequestHandler = async (req, res, next) => {
 
-    const products = await Product.fetchAll();
+    try {
+        const [products, fieldData] = await Product.fetchAll();
 
-    res.render('shop/index', {
-        prods: products,
-        pageTitle: 'Shop',
-        path: '/'
-    });
+        res.render('shop/index', {
+            prods: products,
+            pageTitle: 'Shop',
+            path: '/'
+        });
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const getCart: RequestHandler = async (req, res, next) => {
@@ -48,11 +61,11 @@ const getCart: RequestHandler = async (req, res, next) => {
 };
 
 const postCart: RequestHandler = async (req, res, next) => {
-    const prodId = req.body.productId;
+    // const prodId = req.body.productId;
 
-    const product = await Product.findById(prodId);
-    Cart.addProduct(prodId, product!);
-    res.redirect('/cart');
+    // const product = await Product.findById(prodId);
+    // Cart.addProduct(prodId, product!);
+    // res.redirect('/cart');
 };
 
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {

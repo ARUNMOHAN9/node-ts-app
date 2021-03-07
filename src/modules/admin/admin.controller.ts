@@ -11,38 +11,41 @@ const getAddProduct: RequestHandler = async (req, res, next) => {
 
 const postAddProduct: RequestHandler = async (req, res, next) => {
 
-    const product = new Product({
-        title: req.body.title,
-        imageUrl: req.body.imageUrl,
-        price: +req.body.price,
-        description: req.body.description,
-    });
-    await product.save();
-
-    res.redirect('/');
+    try {
+        const product = new Product({
+            title: req.body.title,
+            imageUrl: req.body.imageUrl,
+            price: +req.body.price,
+            description: req.body.description,
+        });
+        await product.save();
+        res.redirect('/');
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const getEditProduct: RequestHandler = async (req, res, next) => {
 
-    const editMode = req.query.edit;
-    const prodId = req.params.productId;
+    // const editMode = req.query.edit;
+    // const prodId = req.params.productId;
 
-    if (!editMode) {
-        return res.redirect('/');
-    }
+    // if (!editMode) {
+    //     return res.redirect('/');
+    // }
 
-    const product = await Product.findById(prodId);
+    // const product = await Product.findById(prodId);
 
-    if (!product) {
-        return res.redirect('/');
-    }
+    // if (!product) {
+    //     return res.redirect('/');
+    // }
 
-    res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
-        editing: editMode,
-        product: product
-    });
+    // res.render('admin/edit-product', {
+    //     pageTitle: 'Edit Product',
+    //     path: '/admin/edit-product',
+    //     editing: editMode,
+    //     product: product
+    // });
 }
 
 const postEditProduct: RequestHandler = async (req, res, next) => {
