@@ -17,4 +17,6 @@ router.get('/orders', ShopCtrl.getOrders);
 
 router.get('/checkout', ShopCtrl.getCheckout);
 
+router.post('/cart-delete-item', ShopCtrl.postCartDeleteProduct);
+
 export default router;

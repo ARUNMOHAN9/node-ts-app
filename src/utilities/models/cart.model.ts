@@ -6,10 +6,10 @@ import { ICart, ICartItem } from '../interfaces/cart.interface';
 import { IProduct } from '../interfaces/product.interface';
 
 
-const productsPath = path.join(rootDir, 'src', 'data', 'cart.json');
+const cartPath = path.join(rootDir, 'src', 'data', 'cart.json');
 
 const readProdJson = new Promise<ICart>((resolve, reject) => {
-    fs.readFile(productsPath, (err, fileContent) => {
+    fs.readFile(cartPath, (err, fileContent) => {
         let cart = { products: [], totalPrice: 0 };
         if (!err) {
             cart = JSON.parse(fileContent.toString());
@@ -41,9 +41,32 @@ class Cart {
 
         cart.totalPrice += product.price;
 
-        fs.writeFile(productsPath, JSON.stringify(cart), err => {
+        fs.writeFile(cartPath, JSON.stringify(cart), err => {
             console.log(err);
         });
+    }
+
+    static async deleteProduct(id: string) {
+        const cart = await readProdJson;
+
+        const existingProductIndex = cart.products.findIndex(product => product.id === id);
+
+        if (existingProductIndex !== -1) {
+            const prodQty = cart.products[existingProductIndex].quantity;
+
+            const updatedCart: ICart = {
+                products: cart.products.filter(product => product.id !== id),
+                totalPrice: cart.totalPrice - (prodQty * cart.products[existingProductIndex].price)
+            }
+
+            fs.writeFile(cartPath, JSON.stringify(updatedCart), err => {
+                console.log(err);
+            });
+        }
+    }
+
+    static async getCart() {
+        return readProdJson;
     }
 
 }

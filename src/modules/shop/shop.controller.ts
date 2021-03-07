@@ -38,9 +38,12 @@ const getIndex: RequestHandler = async (req, res, next) => {
 };
 
 const getCart: RequestHandler = async (req, res, next) => {
+    const cart = await Cart.getCart();
+
     res.render('shop/cart', {
         path: '/cart',
-        pageTitle: 'Your Cart'
+        pageTitle: 'Your Cart',
+        products: cart.products
     });
 };
 
@@ -50,10 +53,14 @@ const postCart: RequestHandler = async (req, res, next) => {
     const product = await Product.findById(prodId);
     Cart.addProduct(prodId, product!);
     res.redirect('/cart');
-    // res.render('shop/cart', {
-    //     path: '/cart',
-    //     pageTitle: 'Your Cart'
-    // });
+};
+
+const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
+    const prodId = req.body.productId;
+
+    await Cart.deleteProduct(prodId);
+
+    res.redirect('/cart');
 };
 
 const getOrders: RequestHandler = async (req, res, next) => {
@@ -77,6 +84,7 @@ const ShopCtrl = {
     getCart: getCart,
     postCart: postCart,
     getOrders: getOrders,
+    postCartDeleteProduct: postCartDeleteProduct,
     getCheckout: getCheckout
 }
 

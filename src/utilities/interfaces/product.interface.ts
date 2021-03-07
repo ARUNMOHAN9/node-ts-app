@@ -1,5 +1,5 @@
 export interface IProduct {
-    id?: string;
+    id?: string | null;
     title: string;
     imageUrl: string;
     description: string;
