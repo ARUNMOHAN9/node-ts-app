@@ -7,7 +7,7 @@ import HttpStatus from './src/utilities/enums/http-status.enum';
 import rootDir from './src/utilities/helpers/path';
 
 const app = express();
-const PORT = 8000;
+const PORT = 4000;
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
