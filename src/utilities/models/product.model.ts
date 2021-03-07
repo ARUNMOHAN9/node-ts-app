@@ -1,7 +1,21 @@
-import { DataTypes, Sequelize } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import db from '../helpers/database';
 
-const Product = db.define('products', {
+interface ProductAttributes {
+    id: number;
+    title: string;
+    imageUrl: string;
+    description: string;
+    price: number;
+}
+
+interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {
+    userId: number;
+}
+
+interface ProductInstance extends Model<ProductAttributes, ProductCreationAttributes>, ProductAttributes { }
+
+const Product = db.define<ProductInstance>('products', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
