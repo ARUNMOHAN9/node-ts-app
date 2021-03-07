@@ -12,13 +12,19 @@ const getAddProduct: RequestHandler = async (req, res, next) => {
 const postAddProduct: RequestHandler = async (req, res, next) => {
 
     try {
-        const product = new Product({
+        // const product = new Product({
+        //     title: req.body.title,
+        //     imageUrl: req.body.imageUrl,
+        //     price: +req.body.price,
+        //     description: req.body.description,
+        // });
+
+        await Product.create({
             title: req.body.title,
             imageUrl: req.body.imageUrl,
             price: +req.body.price,
             description: req.body.description,
         });
-        await product.save();
         res.redirect('/');
     } catch (error) {
         console.log(error);
@@ -50,26 +56,26 @@ const getEditProduct: RequestHandler = async (req, res, next) => {
 
 const postEditProduct: RequestHandler = async (req, res, next) => {
 
-    const prodId = req.body.productId;
+    // const prodId = req.body.productId;
 
-    const updatedProduct = new Product({
-        title: req.body.title,
-        imageUrl: req.body.imageUrl,
-        price: +req.body.price,
-        description: req.body.description,
-        id: prodId
-    });
+    // const updatedProduct = new Product({
+    //     title: req.body.title,
+    //     imageUrl: req.body.imageUrl,
+    //     price: +req.body.price,
+    //     description: req.body.description,
+    //     id: prodId
+    // });
 
-    await updatedProduct.save();
+    // await updatedProduct.save();
 
-    res.redirect('/admin/products');
+    // res.redirect('/admin/products');
 };
 
 const postDeleteProduct: RequestHandler = async (req, res, next) => {
 
     const prodId = req.body.productId;
 
-    await Product.deleteById(prodId);
+    // await Product.deleteById(prodId);
 
     res.redirect('/admin/products');
 };
@@ -77,13 +83,13 @@ const postDeleteProduct: RequestHandler = async (req, res, next) => {
 
 const getProducts: RequestHandler = async (req, res, next) => {
 
-    const products = await Product.fetchAll();
+    // const products = await Product.fetchAll();
 
-    res.render('admin/products', {
-        prods: products,
-        pageTitle: 'Admin Products',
-        path: '/admin/products'
-    });
+    // res.render('admin/products', {
+    //     prods: products,
+    //     pageTitle: 'Admin Products',
+    //     path: '/admin/products'
+    // });
 };
 
 const AdminCtrl = {

@@ -5,7 +5,7 @@ import Product from '../../utilities/models/product.model';
 const getProducts: RequestHandler = async (req, res, next) => {
 
     try {
-        const [products, fieldData] = await Product.fetchAll();
+        const products = await Product.findAll();
 
         res.render('shop/product-list', {
             prods: products,
@@ -20,25 +20,25 @@ const getProducts: RequestHandler = async (req, res, next) => {
 
 const getProduct: RequestHandler = async (req, res, next) => {
 
-    try {
-        const prodId = +req.params.productId;
+    // try {
+    //     const prodId = +req.params.productId;
 
-        const [product] = await Product.findById(prodId);
+    //     const [product] = await Product.findById(prodId);
 
-        res.render('shop/product-detail', {
-            product: product[0],
-            pageTitle: product[0].title,
-            path: '/products'
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    //     res.render('shop/product-detail', {
+    //         product: product[0],
+    //         pageTitle: product[0].title,
+    //         path: '/products'
+    //     });
+    // } catch (error) {
+    //     console.log(error);
+    // }
 }
 
 const getIndex: RequestHandler = async (req, res, next) => {
 
     try {
-        const [products, fieldData] = await Product.fetchAll();
+        const products = await Product.findAll();
 
         res.render('shop/index', {
             prods: products,
