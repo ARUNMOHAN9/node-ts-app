@@ -20,19 +20,23 @@ const getProducts: RequestHandler = async (req, res, next) => {
 
 const getProduct: RequestHandler = async (req, res, next) => {
 
-    // try {
-    //     const prodId = +req.params.productId;
+    try {
+        const prodId = +req.params.productId;
 
-    //     const [product] = await Product.findById(prodId);
+        const product = await Product.findByPk(prodId);
 
-    //     res.render('shop/product-detail', {
-    //         product: product[0],
-    //         pageTitle: product[0].title,
-    //         path: '/products'
-    //     });
-    // } catch (error) {
-    //     console.log(error);
-    // }
+        if (!product) {
+            return res.redirect('/');
+        } else {
+            res.render('shop/product-detail', {
+                product: product,
+                pageTitle: 'product.title',
+                path: '/products'
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const getIndex: RequestHandler = async (req, res, next) => {
