@@ -11,12 +11,15 @@ const getAddProduct: RequestHandler = async (req, res, next) => {
 
 const postAddProduct: RequestHandler = async (req, res, next) => {
 
+    // usage of req.user.createProduct()
+
     try {
         await Product.create({
             title: req.body.title,
             imageUrl: req.body.imageUrl,
             price: +req.body.price,
             description: req.body.description,
+            userId: (req as any).user.id
         });
         res.redirect('/');
     } catch (error) {
@@ -26,6 +29,7 @@ const postAddProduct: RequestHandler = async (req, res, next) => {
 
 const getEditProduct: RequestHandler = async (req, res, next) => {
 
+    // usage of req.user.getProducts()
     try {
         const editMode = req.query.edit;
         const prodId = req.params.productId;
@@ -85,6 +89,7 @@ const postDeleteProduct: RequestHandler = async (req, res, next) => {
 
 const getProducts: RequestHandler = async (req, res, next) => {
 
+    // usage of req.user.getProducts()
     try {
         const products = await Product.findAll();
         res.render('admin/products', {
