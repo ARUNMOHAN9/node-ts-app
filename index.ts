@@ -4,6 +4,7 @@ import path from 'path';
 import adminRouter from './src/modules/admin/admin.routes';
 import shopRouter from './src/modules/shop/shop.routes';
 import HttpStatus from './src/utilities/enums/http-status.enum';
+import db from './src/utilities/helpers/database';
 import rootDir from './src/utilities/helpers/path';
 
 const app = express();
@@ -21,6 +22,10 @@ app.use(shopRouter);
 app.use("*", (req, res, next) => {
     res.status(HttpStatus.NOT_FOUND).render('404', { pageTitle: 'Page Not Found', path: '' });
 });
+
+db.sync()
+    .then(res => console.log(res))
+    .catch(err => console.log(err))
 
 app.listen(PORT, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
