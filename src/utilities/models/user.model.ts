@@ -1,5 +1,6 @@
-import { DataTypes, Model, Optional } from 'sequelize';
+import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, DataTypes, Model, Optional } from 'sequelize';
 import db from '../helpers/database';
+import { CartInstance } from './cart.model';
 
 interface UsertAttributes {
     id: number;
@@ -9,9 +10,12 @@ interface UsertAttributes {
 
 interface UsertCreationAttributes extends Optional<UsertAttributes, "id"> { }
 
-interface UsertInstance extends Model<UsertAttributes, UsertCreationAttributes>, UsertAttributes { }
+export interface UserInstance extends Model<UsertAttributes, UsertCreationAttributes>, UsertAttributes {
+    getCart: BelongsToGetAssociationMixin<CartInstance>;
+    createCart: BelongsToCreateAssociationMixin<CartInstance>;
+}
 
-const User = db.define<UsertInstance>('user', {
+const User = db.define<UserInstance>('user', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,

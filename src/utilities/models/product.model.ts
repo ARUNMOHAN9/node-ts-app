@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '../helpers/database';
+import { CartItemInstance } from './cart-item.model';
 
 interface ProductAttributes {
     id: number;
@@ -13,7 +14,9 @@ interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {
     userId: number;
 }
 
-interface ProductInstance extends Model<ProductAttributes, ProductCreationAttributes>, ProductAttributes { }
+export interface ProductInstance extends Model<ProductAttributes, ProductCreationAttributes>, ProductAttributes {
+    cartItem: CartItemInstance;
+}
 
 const Product = db.define<ProductInstance>('products', {
     id: {
