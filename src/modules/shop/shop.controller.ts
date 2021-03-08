@@ -96,11 +96,16 @@ const postCart: RequestHandler = async (req, res, next) => {
 };
 
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
-    // const prodId = req.body.productId;
+    try {
+        const prodId = req.body.productId;
+        const cart = await req.user.getCart();
+        const products = await cart.getProducts({ where: { id: prodId } });
 
-    // await Cart.deleteProduct(prodId);
-
-    // res.redirect('/cart');
+        await products[0].cartItem.destroy();
+        res.redirect('/cart');
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const getOrders: RequestHandler = async (req, res, next) => {
