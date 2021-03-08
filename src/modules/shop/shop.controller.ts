@@ -108,7 +108,37 @@ const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
     }
 };
 
+const postOrder: RequestHandler = async (req, res, next) => {
+    try {
+        const cart = await req.user.getCart();
+        const products = await cart.getProducts();
+        const order = await req.user.createOrder();
+
+        await order.addProducts(products.map((product: any) => {
+            product.orderItem = { quantity: product.cartItem.quantity };
+            return product;
+        }));
+
+        await cart.setProducts([]);
+
+        res.redirect('/orders');
+
+    } catch (error) {
+        console.log(error)
+    }
+};
+
 const getOrders: RequestHandler = async (req, res, next) => {
+    try {
+        const orders = await req.user.getOrders({ include: ['products'] });
+        res.render('shop/orders', {
+            path: '/orders',
+            pageTitle: 'Your Orders',
+            orders: orders
+        });
+    } catch (error) {
+        console.log(error);
+    }
     res.render('shop/orders', {
         path: '/orders',
         pageTitle: 'Your Orders'
@@ -130,7 +160,8 @@ const ShopCtrl = {
     postCart: postCart,
     getOrders: getOrders,
     postCartDeleteProduct: postCartDeleteProduct,
-    getCheckout: getCheckout
+    getCheckout: getCheckout,
+    postOrder: postOrder
 }
 
 export default ShopCtrl;

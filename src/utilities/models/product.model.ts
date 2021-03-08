@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '../helpers/database';
 import { CartItemInstance } from './cart-item.model';
+import { OrderItemInstance } from './order-item';
 
 interface ProductAttributes {
     id: number;
@@ -16,6 +17,7 @@ interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {
 
 export interface ProductInstance extends Model<ProductAttributes, ProductCreationAttributes>, ProductAttributes {
     cartItem: CartItemInstance;
+    orderItem: OrderItemInstance;
 }
 
 const Product = db.define<ProductInstance>('products', {
