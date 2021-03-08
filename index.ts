@@ -8,6 +8,8 @@ import db from './src/utilities/helpers/database';
 import rootDir from './src/utilities/helpers/path';
 import CartItem from './src/utilities/models/cart-item.model';
 import Cart from './src/utilities/models/cart.model';
+import OrderItem from './src/utilities/models/order-item';
+import Order from './src/utilities/models/order.model';
 import Product from './src/utilities/models/product.model';
 import User from './src/utilities/models/user.model';
 
@@ -42,6 +44,9 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
 
 db.sync()
     .then(_ => {
