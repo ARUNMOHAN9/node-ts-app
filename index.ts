@@ -6,11 +6,13 @@ import shopRouter from './src/modules/shop/shop.routes';
 import HttpStatus from './src/utilities/enums/http-status.enum';
 import db from './src/utilities/helpers/database';
 import rootDir from './src/utilities/helpers/path';
+import CartItem from './src/utilities/models/cart-item.model';
+import Cart from './src/utilities/models/cart.model';
 import Product from './src/utilities/models/product.model';
 import User from './src/utilities/models/user.model';
 
 const app = express();
-const PORT = 4000;
+const PORT = 8000;
 
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
@@ -21,7 +23,7 @@ app.use(express.static(path.join(rootDir, 'public')));
 app.use((req, res, next) => {
     User.findByPk(1)
         .then(user => {
-            (req as any).user = user;
+            req.user = user!;
             next();
         })
         .catch(err => console.log(err))
@@ -36,6 +38,10 @@ app.use("*", (req, res, next) => {
 
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 db.sync()
     .then(_ => {
@@ -47,9 +53,11 @@ db.sync()
                 return user;
             })
             .then(user => {
-                console.log(user);
-                app.listen(PORT, () => {
-                    console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
+                // console.log(user);
+                user.createCart().then(_ => {
+                    app.listen(PORT, () => {
+                        console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
+                    });
                 });
             });
     })
