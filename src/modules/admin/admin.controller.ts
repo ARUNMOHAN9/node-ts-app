@@ -29,61 +29,63 @@ const postAddProduct: RequestHandler = async (req, res, next) => {
 
 const getEditProduct: RequestHandler = async (req, res, next) => {
 
-    // usage of req.user.getProducts()
-    // try {
-    //     const editMode = req.query.edit;
-    //     const prodId = req.params.productId;
+    try {
+        const editMode = req.query.edit;
+        const prodId = req.params.productId;
 
-    //     if (!editMode) {
-    //         return res.redirect('/');
-    //     }
+        if (!editMode) {
+            return res.redirect('/');
+        }
 
-    //     const product = await Product.findByPk(prodId);
+        const product = await Product.fetchById(prodId);
 
-    //     if (!product) {
-    //         return res.redirect('/');
-    //     }
+        if (!product) {
+            return res.redirect('/');
+        }
 
-    //     res.render('admin/edit-product', {
-    //         pageTitle: 'Edit Product',
-    //         path: '/admin/edit-product',
-    //         editing: editMode,
-    //         product: product
-    //     });
-    // } catch (error) {
-    //     console.log(error);
-    // }
+        res.render('admin/edit-product', {
+            pageTitle: 'Edit Product',
+            path: '/admin/edit-product',
+            editing: editMode,
+            product: product
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 const postEditProduct: RequestHandler = async (req, res, next) => {
 
-    // try {
-    //     const prodId = req.body.productId;
+    try {
+        const prodId = req.body.productId;
 
-    //     await Product.update({
-    //         title: req.body.title,
-    //         imageUrl: req.body.imageUrl,
-    //         price: +req.body.price,
-    //         description: req.body.description
-    //     }, { where: { id: prodId } });
+        const product = new Product({
+            title: req.body.title,
+            imageUrl: req.body.imageUrl,
+            price: +req.body.price,
+            description: req.body.description,
+            id: prodId
+        });
 
-    //     res.redirect('/admin/products');
-    // } catch (error) {
-    //     console.log(error);
-    // }
+        await product.save();
+
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const postDeleteProduct: RequestHandler = async (req, res, next) => {
 
-    // try {
-    //     const prodId = req.body.productId;
+    try {
+        const prodId = req.body.productId;
 
-    //     await Product.destroy({ where: { id: prodId } });
+        await Product.delete(prodId);
 
-    //     res.redirect('/admin/products');
-    // } catch (error) {
-    //     console.log(error);
-    // }
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 
