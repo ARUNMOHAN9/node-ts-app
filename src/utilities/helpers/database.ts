@@ -10,6 +10,8 @@ const mongoClient = async () => {
         _db = client.db();
         return true;
     } catch (error) {
+        console.log(error);
+
         return false;
     }
 };

@@ -25,7 +25,7 @@ class User {
         let newQty = 1;
         const updatedCartItems = this.cart?.products.map((elem: any) => {
             return {
-                productId: new ObjectId(elem._id!),
+                productId: elem.productId,
                 quantity: elem.quantity!
             }
         }) || [];
@@ -45,7 +45,7 @@ class User {
         return getDb().collection('users').updateOne({ _id: new ObjectId(this._id) }, { $set: { cart: updatedCart } });
     }
 
-    getCart() {
+    async getCart() {
         const prodIds = this.cart?.products.map((elem: any) => elem.productId) || [];
         return getDb()
             .collection('products')
@@ -60,6 +60,28 @@ class User {
                     }
                 })
             });
+    }
+
+    async addOrder() {
+        const products = await this.getCart();
+
+        const order = {
+            products: products,
+            user: {
+                _id: new ObjectId(this._id),
+                name: this.name,
+                email: this.email
+            }
+        }
+        return getDb().collection('orders').insertOne(order)
+            .then(() => {
+                this.cart = { products: [] };
+                return getDb().collection('users').updateOne({ _id: new ObjectId(this._id) }, { $set: { cart: { products: [] } } })
+            });
+    }
+
+    getOrders() {
+        return getDb().collection('orders').find({ 'user._id': new ObjectId(this._id) }).toArray()
     }
 
     deleteItemFromCart(id: string) {

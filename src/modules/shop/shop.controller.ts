@@ -73,8 +73,6 @@ const postCart: RequestHandler = async (req, res, next) => {
 
         await req.user.addToCart(product);
 
-        res.redirect('/cart');
-
     } catch (error) {
         console.log(error)
     } finally {
@@ -95,40 +93,27 @@ const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
 };
 
 const postOrder: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const cart = await req.user.getCart();
-    //     const products = await cart.getProducts();
-    //     const order = await req.user.createOrder();
+    try {
+        await req.user.addOrder();
 
-    //     await order.addProducts(products.map((product: any) => {
-    //         product.orderItem = { quantity: product.cartItem.quantity };
-    //         return product;
-    //     }));
+        res.redirect('/orders');
 
-    //     await cart.setProducts([]);
-
-    //     res.redirect('/orders');
-
-    // } catch (error) {
-    //     console.log(error)
-    // }
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const getOrders: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const orders = await req.user.getOrders({ include: ['products'] });
-    //     res.render('shop/orders', {
-    //         path: '/orders',
-    //         pageTitle: 'Your Orders',
-    //         orders: orders
-    //     });
-    // } catch (error) {
-    //     console.log(error);
-    // }
-    // res.render('shop/orders', {
-    //     path: '/orders',
-    //     pageTitle: 'Your Orders'
-    // });
+    try {
+        const orders = await req.user.getOrders();
+        res.render('shop/orders', {
+            path: '/orders',
+            pageTitle: 'Your Orders',
+            orders: orders
+        });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const getCheckout: RequestHandler = async (req, res, next) => {

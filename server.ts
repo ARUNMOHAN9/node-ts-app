@@ -35,7 +35,9 @@ app.use("*", (req, res) => {
 client()
     .then((success) => {
         if (success) {
-            console.log(`⚡️[server]: Server is running at https://localhost:8000`);
-            app.listen(8000);
+            console.log(`⚡️[server]: Server is running at https://localhost:4000`);
+            app.listen(4000);
         }
     });
+
+// app.listen(4000);
