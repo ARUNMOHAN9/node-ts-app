@@ -7,18 +7,20 @@ class Product {
     price: number;
     description: string;
     imageUrl: string;
-    id?: string | null;
-    constructor(product: IProduct) {
+    _id?: string | null;
+    userId?: string | null;
+    constructor(product: IProduct, userId?: string) {
         this.title = product.title;
         this.price = product.price;
         this.description = product.description;
         this.imageUrl = product.imageUrl;
-        this.id = product.id;
+        this._id = product._id;
+        this.userId = userId;
     }
 
     save() {
-        if (this.id) {
-            return getDb().collection('products').updateOne({ _id: new ObjectId(this.id) }, { $set: this })
+        if (this._id) {
+            return getDb().collection('products').updateOne({ _id: new ObjectId(this._id) }, { $set: this })
         } else {
             return getDb().collection('products').insertOne(this);
         }

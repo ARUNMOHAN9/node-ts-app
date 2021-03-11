@@ -12,12 +12,14 @@ const getAddProduct: RequestHandler = async (req, res, next) => {
 const postAddProduct: RequestHandler = async (req, res, next) => {
 
     try {
+        const userId = req.user._id;
+
         const product = new Product({
             title: req.body.title,
             imageUrl: req.body.imageUrl,
             price: +req.body.price,
             description: req.body.description
-        });
+        }, userId);
 
         await product.save();
 
@@ -64,7 +66,7 @@ const postEditProduct: RequestHandler = async (req, res, next) => {
             imageUrl: req.body.imageUrl,
             price: +req.body.price,
             description: req.body.description,
-            id: prodId
+            _id: prodId
         });
 
         await product.save();
