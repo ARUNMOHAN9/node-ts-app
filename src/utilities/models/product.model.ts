@@ -20,7 +20,8 @@ class Product {
 
     save() {
         if (this._id) {
-            return getDb().collection('products').updateOne({ _id: new ObjectId(this._id) }, { $set: this })
+            const { _id, ...data } = this;
+            return getDb().collection('products').updateOne({ _id: new ObjectId(this._id) }, { $set: data })
         } else {
             return getDb().collection('products').insertOne(this);
         }
