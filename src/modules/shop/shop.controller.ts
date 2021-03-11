@@ -54,17 +54,16 @@ const getIndex: RequestHandler = async (req, res, next) => {
 };
 
 const getCart: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const cart = await req.user.getCart();
-    //     const products = await cart.getProducts();
-    //     res.render('shop/cart', {
-    //         path: '/cart',
-    //         pageTitle: 'Your Cart',
-    //         products: products
-    //     });
-    // } catch (error) {
-    //     console.log(error)
-    // }
+    try {
+        const products = await req.user.getCart();
+        res.render('shop/cart', {
+            path: '/cart',
+            pageTitle: 'Your Cart',
+            products: products
+        });
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const postCart: RequestHandler = async (req, res, next) => {
@@ -72,27 +71,10 @@ const postCart: RequestHandler = async (req, res, next) => {
         const prodId = req.body.productId;
         const product = await Product.fetchById(prodId);
 
-        const result = await req.user.addToCart(product);
+        await req.user.addToCart(product);
 
-        console.log(result);
+        res.redirect('/cart');
 
-        // const cart = await req.user.getCart();
-        // const products = await cart.getProducts({ where: { id: prodId } });
-
-        // let product = null;
-        // let newQty = 1;
-        // if (products.length) {
-        //     product = products[0];
-        // }
-        // if (product) {
-        //     const oldQty = product.cartItem.quantity;
-        //     newQty += oldQty;
-        // }
-
-        // const productDetail = await Product.findByPk(prodId);
-        // if (productDetail) {
-        //     await cart.addProduct(productDetail, { through: { quantity: newQty } });
-        // }
     } catch (error) {
         console.log(error)
     } finally {
@@ -101,16 +83,15 @@ const postCart: RequestHandler = async (req, res, next) => {
 };
 
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const prodId = req.body.productId;
-    //     const cart = await req.user.getCart();
-    //     const products = await cart.getProducts({ where: { id: prodId } });
+    try {
+        const prodId = req.body.productId;
 
-    //     await products[0].cartItem.destroy();
-    //     res.redirect('/cart');
-    // } catch (error) {
-    //     console.log(error)
-    // }
+        await req.user.deleteItemFromCart(prodId);
+
+        res.redirect('/cart');
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const postOrder: RequestHandler = async (req, res, next) => {
