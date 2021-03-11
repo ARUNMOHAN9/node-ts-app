@@ -1,11 +1,28 @@
-import { Sequelize } from 'sequelize';
+import { Db, MongoClient } from 'mongodb';
 
-const db = new Sequelize({
-    database: 'node-db',
-    username: 'root',
-    password: 'admin@123',
-    dialect: 'mysql',
-    host: 'localhost'
-});
+const URI = "mongodb+srv://root:admin%40123@cluster0.kajhf.mongodb.net/test?retryWrites=true&w=majority";
 
-export default db;
+let _db: Db;
+
+const mongoClient = async () => {
+    try {
+        const client = await new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true }).connect();
+        _db = client.db();
+        return true;
+    } catch (error) {
+        console.log(error);
+
+        return false;
+    }
+};
+
+export const getDb = () => {
+    if (_db) {
+        return _db;
+    }
+    throw new Error("No database found");
+}
+
+
+
+export default mongoClient;

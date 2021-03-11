@@ -1,48 +1,43 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import db from '../helpers/database';
-import { CartItemInstance } from './cart-item.model';
-import { OrderItemInstance } from './order-item';
+import { Db, ObjectId } from 'mongodb';
+import { getDb } from '../helpers/database';
+import { IProduct } from '../interfaces/product.interface';
 
-interface ProductAttributes {
-    id: number;
+class Product {
     title: string;
-    imageUrl: string;
-    description: string;
     price: number;
-}
-
-interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {
-    userId: number;
-}
-
-export interface ProductInstance extends Model<ProductAttributes, ProductCreationAttributes>, ProductAttributes {
-    cartItem: CartItemInstance;
-    orderItem: OrderItemInstance;
-}
-
-const Product = db.define<ProductInstance>('products', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    price: {
-        type: DataTypes.DOUBLE,
-        allowNull: false,
-    },
-    imageUrl: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    description: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    description: string;
+    imageUrl: string;
+    _id?: string | null;
+    userId?: string | null;
+    constructor(product: IProduct, userId?: string) {
+        this.title = product.title;
+        this.price = product.price;
+        this.description = product.description;
+        this.imageUrl = product.imageUrl;
+        this._id = product._id;
+        this.userId = userId;
     }
-});
+
+    save() {
+        if (this._id) {
+            const { _id, ...data } = this;
+            return getDb().collection('products').updateOne({ _id: new ObjectId(this._id) }, { $set: data })
+        } else {
+            return getDb().collection('products').insertOne(this);
+        }
+    }
+
+    static delete(id: string) {
+        return getDb().collection('products').deleteOne({ _id: new ObjectId(id) });
+    }
+
+    static fetchAll() {
+        return getDb().collection('products').find().toArray();
+    }
+
+    static fetchById(id: string) {
+        return getDb().collection('products').findOne({ _id: new ObjectId(id) });
+    }
+}
 
 export default Product;

@@ -1,11 +1,10 @@
 import { RequestHandler } from 'express';
-import Cart from '../../utilities/models/cart.model';
 import Product from '../../utilities/models/product.model';
 
 const getProducts: RequestHandler = async (req, res, next) => {
 
     try {
-        const products = await Product.findAll();
+        const products = await Product.fetchAll();
 
         res.render('shop/product-list', {
             prods: products,
@@ -21,9 +20,9 @@ const getProducts: RequestHandler = async (req, res, next) => {
 const getProduct: RequestHandler = async (req, res, next) => {
 
     try {
-        const prodId = +req.params.productId;
+        const prodId = req.params.productId;
 
-        const product = await Product.findByPk(prodId);
+        const product = await Product.fetchById(prodId);
 
         if (!product) {
             return res.redirect('/');
@@ -42,7 +41,7 @@ const getProduct: RequestHandler = async (req, res, next) => {
 const getIndex: RequestHandler = async (req, res, next) => {
 
     try {
-        const products = await Product.findAll();
+        const products = await Product.fetchAll();
 
         res.render('shop/index', {
             prods: products,
@@ -56,8 +55,7 @@ const getIndex: RequestHandler = async (req, res, next) => {
 
 const getCart: RequestHandler = async (req, res, next) => {
     try {
-        const cart = await req.user.getCart();
-        const products = await cart.getProducts();
+        const products = await req.user.getCart();
         res.render('shop/cart', {
             path: '/cart',
             pageTitle: 'Your Cart',
@@ -71,23 +69,10 @@ const getCart: RequestHandler = async (req, res, next) => {
 const postCart: RequestHandler = async (req, res, next) => {
     try {
         const prodId = req.body.productId;
-        const cart = await req.user.getCart();
-        const products = await cart.getProducts({ where: { id: prodId } });
+        const product = await Product.fetchById(prodId);
 
-        let product = null;
-        let newQty = 1;
-        if (products.length) {
-            product = products[0];
-        }
-        if (product) {
-            const oldQty = product.cartItem.quantity;
-            newQty += oldQty;
-        }
+        await req.user.addToCart(product);
 
-        const productDetail = await Product.findByPk(prodId);
-        if (productDetail) {
-            await cart.addProduct(productDetail, { through: { quantity: newQty } });
-        }
     } catch (error) {
         console.log(error)
     } finally {
@@ -98,10 +83,9 @@ const postCart: RequestHandler = async (req, res, next) => {
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
     try {
         const prodId = req.body.productId;
-        const cart = await req.user.getCart();
-        const products = await cart.getProducts({ where: { id: prodId } });
 
-        await products[0].cartItem.destroy();
+        await req.user.deleteItemFromCart(prodId);
+
         res.redirect('/cart');
     } catch (error) {
         console.log(error)
@@ -110,16 +94,7 @@ const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
 
 const postOrder: RequestHandler = async (req, res, next) => {
     try {
-        const cart = await req.user.getCart();
-        const products = await cart.getProducts();
-        const order = await req.user.createOrder();
-
-        await order.addProducts(products.map((product: any) => {
-            product.orderItem = { quantity: product.cartItem.quantity };
-            return product;
-        }));
-
-        await cart.setProducts([]);
+        await req.user.addOrder();
 
         res.redirect('/orders');
 
@@ -130,7 +105,7 @@ const postOrder: RequestHandler = async (req, res, next) => {
 
 const getOrders: RequestHandler = async (req, res, next) => {
     try {
-        const orders = await req.user.getOrders({ include: ['products'] });
+        const orders = await req.user.getOrders();
         res.render('shop/orders', {
             path: '/orders',
             pageTitle: 'Your Orders',
@@ -139,10 +114,6 @@ const getOrders: RequestHandler = async (req, res, next) => {
     } catch (error) {
         console.log(error);
     }
-    res.render('shop/orders', {
-        path: '/orders',
-        pageTitle: 'Your Orders'
-    });
 };
 
 const getCheckout: RequestHandler = async (req, res, next) => {
