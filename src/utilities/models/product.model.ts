@@ -1,48 +1,31 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import db from '../helpers/database';
-import { CartItemInstance } from './cart-item.model';
-import { OrderItemInstance } from './order-item';
+import { ObjectId } from 'mongodb';
+import { getDb } from '../helpers/database';
+import { IProduct } from '../interfaces/product.interface';
 
-interface ProductAttributes {
-    id: number;
+class Product {
     title: string;
-    imageUrl: string;
-    description: string;
     price: number;
-}
-
-interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {
-    userId: number;
-}
-
-export interface ProductInstance extends Model<ProductAttributes, ProductCreationAttributes>, ProductAttributes {
-    cartItem: CartItemInstance;
-    orderItem: OrderItemInstance;
-}
-
-const Product = db.define<ProductInstance>('products', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    price: {
-        type: DataTypes.DOUBLE,
-        allowNull: false,
-    },
-    imageUrl: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    description: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    description: string;
+    imageUrl: string;
+    constructor(product: IProduct) {
+        this.title = product.title;
+        this.price = product.price;
+        this.description = product.description;
+        this.imageUrl = product.imageUrl;
     }
-});
+
+    save() {
+        const db = getDb();
+        return db.collection('products').insertOne(this);
+    }
+
+    static fetchAll() {
+        return getDb().collection('products').find().toArray();
+    }
+
+    static fetchById(id: string) {
+        return getDb().collection('products').findOne({ _id: new ObjectId(id) });
+    }
+}
 
 export default Product;
