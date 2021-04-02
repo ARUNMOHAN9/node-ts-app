@@ -6,6 +6,8 @@ export interface IUser extends Document {
     email: string;
     cart: any;
     addToCart: (product: IProduct) => Promise<IUser>;
+    removeFromCart: (productId: number) => Promise<IUser>;
+    clearCart: () => Promise<IUser>;
 }
 
 const UserSchema: Schema<IUser> = new Schema({
@@ -57,6 +59,22 @@ UserSchema.methods.addToCart = function (product) {
 
     this.cart = updatedCart;
 
+    return this.save();
+}
+
+UserSchema.methods.removeFromCart = function (productId: number) {
+    const updatedCartItems = this.cart.items.filter((item: any) => {
+        return item.productId.toString() !== productId.toString()
+    });
+
+    this.cart.items = updatedCartItems;
+    return this.save();
+}
+
+UserSchema.methods.clearCart = function () {
+    this.cart = {
+        items: []
+    };
     return this.save();
 }
 
