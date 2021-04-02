@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+import Order from '../../utilities/models/order.model';
 import Product from '../../utilities/models/product.model';
 
 const getProducts: RequestHandler = async (req, res, next) => {
@@ -83,39 +84,57 @@ const postCart: RequestHandler = async (req, res, next) => {
 };
 
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const prodId = req.body.productId;
+    try {
+        const prodId = req.body.productId;
 
-    //     await req.user.deleteItemFromCart(prodId);
+        await req.user.removeFromCart(prodId);
 
-    //     res.redirect('/cart');
-    // } catch (error) {
-    //     console.log(error)
-    // }
+        res.redirect('/cart');
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const postOrder: RequestHandler = async (req, res, next) => {
-    // try {
-    //     await req.user.addOrder();
+    try {
+        const cart = (await req.user.populate('cart.items.productId').execPopulate()).cart;
+        const products = cart.items.map((item: any) => {
+            return {
+                quantity: item.quantity,
+                product: { ...item.productId._doc }
+            }
+        });
 
-    //     res.redirect('/orders');
+        const order = new Order({
+            user: {
+                name: req.user.name,
+                userId: req.user
+            },
+            products: products
+        });
 
-    // } catch (error) {
-    //     console.log(error)
-    // }
+        await order.save();
+
+        await req.user.clearCart();
+
+        res.redirect('/orders');
+
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const getOrders: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const orders = await req.user.getOrders();
-    //     res.render('shop/orders', {
-    //         path: '/orders',
-    //         pageTitle: 'Your Orders',
-    //         orders: orders
-    //     });
-    // } catch (error) {
-    //     console.log(error);
-    // }
+    try {
+        const orders = await Order.find({ "user.userId": req.user._id });
+        res.render('shop/orders', {
+            path: '/orders',
+            pageTitle: 'Your Orders',
+            orders: orders
+        });
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 const getCheckout: RequestHandler = async (req, res, next) => {
