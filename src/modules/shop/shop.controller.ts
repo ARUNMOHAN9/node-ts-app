@@ -67,17 +67,19 @@ const getCart: RequestHandler = async (req, res, next) => {
 };
 
 const postCart: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const prodId = req.body.productId;
-    //     const product = await Product.findById(prodId);
+    try {
+        const prodId = req.body.productId;
+        const product = await Product.findById(prodId);
 
-    //     await req.user.addToCart(product);
+        if (product) {
+            await req.user.addToCart(product);
+        }
 
-    // } catch (error) {
-    //     console.log(error)
-    // } finally {
-    //     res.redirect('/cart');
-    // }
+    } catch (error) {
+        console.log(error)
+    } finally {
+        res.redirect('/cart');
+    }
 };
 
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
