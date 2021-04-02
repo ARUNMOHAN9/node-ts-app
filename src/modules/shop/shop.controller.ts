@@ -54,16 +54,16 @@ const getIndex: RequestHandler = async (req, res, next) => {
 };
 
 const getCart: RequestHandler = async (req, res, next) => {
-    // try {
-    //     const products = await req.user.getCart();
-    //     res.render('shop/cart', {
-    //         path: '/cart',
-    //         pageTitle: 'Your Cart',
-    //         products: products
-    //     });
-    // } catch (error) {
-    //     console.log(error)
-    // }
+    try {
+        const products = (await req.user.populate('cart.items.productId').execPopulate()).cart.items;
+        res.render('shop/cart', {
+            path: '/cart',
+            pageTitle: 'Your Cart',
+            products: products
+        });
+    } catch (error) {
+        console.log(error)
+    }
 };
 
 const postCart: RequestHandler = async (req, res, next) => {

@@ -9,7 +9,7 @@ router.get('/products', ShopCtrl.getProducts);
 
 router.get('/products/:productId', ShopCtrl.getProduct);
 
-// router.get('/cart', ShopCtrl.getCart);
+router.get('/cart', ShopCtrl.getCart);
 
 router.post('/cart', ShopCtrl.postCart);
 
