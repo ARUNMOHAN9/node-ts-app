@@ -1,24 +1,36 @@
-import { BelongsToManyAddAssociationsMixin, DataTypes, Model, Optional } from 'sequelize';
-import db from '../helpers/database';
-import { ProductInstance } from './product.model';
+import { model, Schema, Model, Document } from 'mongoose';
 
-interface OrderAttributes {
-    id: number;
+export interface IOrder extends Document {
+    title: string;
+    price: number;
+    description: string;
+    imageUrl: string;
 }
 
-interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> { }
-
-export interface OrderInstance extends Model<OrderAttributes, OrderCreationAttributes>, OrderAttributes {
-    addProducts: BelongsToManyAddAssociationsMixin<ProductInstance, ProductInstance['id']>;
-}
-
-const Order = db.define<OrderInstance>('order', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
+const OrderSchema: Schema = new Schema({
+    products: [
+        {
+            product: {
+                type: Object, required: true
+            },
+            quantity: {
+                type: Number, required: true
+            },
+        }
+    ],
+    user: {
+        name: {
+            type: String,
+            required: true
+        },
+        userId: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            ref: 'User'
+        }
     }
 });
+
+const Order = model<IOrder>('Order', OrderSchema);
 
 export default Order;
