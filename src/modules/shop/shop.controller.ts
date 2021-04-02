@@ -4,7 +4,7 @@ import Product from '../../utilities/models/product.model';
 const getProducts: RequestHandler = async (req, res, next) => {
 
     try {
-        const products = await Product.fetchAll();
+        const products = await Product.find();
 
         res.render('shop/product-list', {
             prods: products,
@@ -22,7 +22,7 @@ const getProduct: RequestHandler = async (req, res, next) => {
     try {
         const prodId = req.params.productId;
 
-        const product = await Product.fetchById(prodId);
+        const product = await Product.findById(prodId);
 
         if (!product) {
             return res.redirect('/');
@@ -41,7 +41,7 @@ const getProduct: RequestHandler = async (req, res, next) => {
 const getIndex: RequestHandler = async (req, res, next) => {
 
     try {
-        const products = await Product.fetchAll();
+        const products = await Product.find();
 
         res.render('shop/index', {
             prods: products,
@@ -69,7 +69,7 @@ const getCart: RequestHandler = async (req, res, next) => {
 const postCart: RequestHandler = async (req, res, next) => {
     try {
         const prodId = req.body.productId;
-        const product = await Product.fetchById(prodId);
+        const product = await Product.findById(prodId);
 
         await req.user.addToCart(product);
 

@@ -3,11 +3,11 @@ import ShopCtrl from './shop.controller';
 
 const router = Router();
 
-// router.get('/', ShopCtrl.getIndex);
+router.get('/', ShopCtrl.getIndex);
 
-// router.get('/products', ShopCtrl.getProducts);
+router.get('/products', ShopCtrl.getProducts);
 
-// router.get('/products/:productId', ShopCtrl.getProduct);
+router.get('/products/:productId', ShopCtrl.getProduct);
 
 // router.get('/cart', ShopCtrl.getCart);
 
