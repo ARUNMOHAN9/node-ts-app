@@ -17,14 +17,15 @@ app.set('views', 'src/views');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(rootDir, 'public')));
 
-// app.use((req, res, next) => {
-//     User.findById('6049ffc189dd39a8f0a5cf57')
-//         .then(user => {
-//             req.user = new User(user);
-//         })
-//         .catch(err => console.log(err))
-//         .finally(() => next());
-// });
+app.use((req, res, next) => {
+    User.findById('6066ba478d9a30494c154d3f')
+        .then(user => {
+            if (user)
+                req.user = user;
+        })
+        .catch(err => console.log(err))
+        .finally(() => next());
+});
 
 app.use('/admin', adminRouter);
 app.use(shopRouter);
@@ -37,6 +38,19 @@ mongoose.connect("mongodb+srv://root:admin%40123@cluster0.kajhf.mongodb.net/shop
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(_ => {
-    console.log(`⚡️[server]: Server is running at https://localhost:3000`);
-    app.listen(3000);
+    User.findOne().then(user => {
+        if (!user) {
+            const user = new User({
+                name: 'Max',
+                email: 'max@test.com',
+                cart: {
+                    items: []
+                }
+            });
+            user.save();
+        }
+    }).then(_ => {
+        console.log(`⚡️[server]: Server is running at https://localhost:3000`);
+        app.listen(3000);
+    });
 }).catch(err => console.log(err))

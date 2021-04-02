@@ -54,66 +54,66 @@ const getIndex: RequestHandler = async (req, res, next) => {
 };
 
 const getCart: RequestHandler = async (req, res, next) => {
-    try {
-        const products = await req.user.getCart();
-        res.render('shop/cart', {
-            path: '/cart',
-            pageTitle: 'Your Cart',
-            products: products
-        });
-    } catch (error) {
-        console.log(error)
-    }
+    // try {
+    //     const products = await req.user.getCart();
+    //     res.render('shop/cart', {
+    //         path: '/cart',
+    //         pageTitle: 'Your Cart',
+    //         products: products
+    //     });
+    // } catch (error) {
+    //     console.log(error)
+    // }
 };
 
 const postCart: RequestHandler = async (req, res, next) => {
-    try {
-        const prodId = req.body.productId;
-        const product = await Product.findById(prodId);
+    // try {
+    //     const prodId = req.body.productId;
+    //     const product = await Product.findById(prodId);
 
-        await req.user.addToCart(product);
+    //     await req.user.addToCart(product);
 
-    } catch (error) {
-        console.log(error)
-    } finally {
-        res.redirect('/cart');
-    }
+    // } catch (error) {
+    //     console.log(error)
+    // } finally {
+    //     res.redirect('/cart');
+    // }
 };
 
 const postCartDeleteProduct: RequestHandler = async (req, res, next) => {
-    try {
-        const prodId = req.body.productId;
+    // try {
+    //     const prodId = req.body.productId;
 
-        await req.user.deleteItemFromCart(prodId);
+    //     await req.user.deleteItemFromCart(prodId);
 
-        res.redirect('/cart');
-    } catch (error) {
-        console.log(error)
-    }
+    //     res.redirect('/cart');
+    // } catch (error) {
+    //     console.log(error)
+    // }
 };
 
 const postOrder: RequestHandler = async (req, res, next) => {
-    try {
-        await req.user.addOrder();
+    // try {
+    //     await req.user.addOrder();
 
-        res.redirect('/orders');
+    //     res.redirect('/orders');
 
-    } catch (error) {
-        console.log(error)
-    }
+    // } catch (error) {
+    //     console.log(error)
+    // }
 };
 
 const getOrders: RequestHandler = async (req, res, next) => {
-    try {
-        const orders = await req.user.getOrders();
-        res.render('shop/orders', {
-            path: '/orders',
-            pageTitle: 'Your Orders',
-            orders: orders
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    // try {
+    //     const orders = await req.user.getOrders();
+    //     res.render('shop/orders', {
+    //         path: '/orders',
+    //         pageTitle: 'Your Orders',
+    //         orders: orders
+    //     });
+    // } catch (error) {
+    //     console.log(error);
+    // }
 };
 
 const getCheckout: RequestHandler = async (req, res, next) => {
