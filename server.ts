@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 import adminRouter from './src/modules/admin/admin.routes';
 import shopRouter from './src/modules/shop/shop.routes';
+import authRouter from './src/modules/auth/auth.routes';
 import HttpStatus from './src/utilities/enums/http-status.enum';
 import rootDir from './src/utilities/helpers/path';
 import User from './src/utilities/models/user.model';
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRouter);
 app.use(shopRouter);
+app.use(authRouter);
 
 app.use("*", (req, res) => {
     res.status(HttpStatus.NOT_FOUND).render('404', { pageTitle: 'Page Not Found', path: '' });
