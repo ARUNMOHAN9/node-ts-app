@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 
 import mongoose from 'mongoose';
+import session from 'express-session';
 
 import adminRouter from './src/modules/admin/admin.routes';
 import shopRouter from './src/modules/shop/shop.routes';
@@ -17,6 +18,18 @@ app.set('views', 'src/views');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(rootDir, 'public')));
+
+app.use(session({
+    secret: 'mySecret',
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use((req, res, next) => {
+    const authstate = (req.session as any).isLoggedIn;
+    req.isLoggedIn = authstate === true;
+    next();
+});
 
 app.use((req, res, next) => {
     User.findById('6066ba478d9a30494c154d3f')
