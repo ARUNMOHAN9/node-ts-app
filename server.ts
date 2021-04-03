@@ -3,6 +3,7 @@ import path from 'path';
 
 import mongoose from 'mongoose';
 import session from 'express-session';
+import ConnectMongoDBSession from 'connect-mongodb-session';
 
 import adminRouter from './src/modules/admin/admin.routes';
 import shopRouter from './src/modules/shop/shop.routes';
@@ -13,6 +14,12 @@ import User from './src/utilities/models/user.model';
 
 const app = express();
 
+const MongoDbSore = ConnectMongoDBSession(session);
+const store = new MongoDbSore({
+    uri: "mongodb+srv://root:admin%40123@cluster0.kajhf.mongodb.net/shop",
+    collection: 'sessions'
+});
+
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
@@ -22,7 +29,8 @@ app.use(express.static(path.join(rootDir, 'public')));
 app.use(session({
     secret: 'mySecret',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    store: store
 }));
 
 app.use((req, res, next) => {

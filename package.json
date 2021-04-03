@@ -11,6 +11,7 @@
 	"author": "Arun Mohan",
 	"license": "MIT",
 	"dependencies": {
+		"connect-mongodb-session": "^2.4.1",
 		"ejs": "^3.1.6",
 		"express": "^4.17.1",
 		"express-session": "^1.17.1",
@@ -20,6 +21,7 @@
 		"sequelize": "^6.5.0"
 	},
 	"devDependencies": {
+		"@types/connect-mongodb-session": "^2.4.0",
 		"@types/express": "^4.17.11",
 		"@types/express-session": "^1.17.3",
 		"@types/mongodb": "^3.6.9",

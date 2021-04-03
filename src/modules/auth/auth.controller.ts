@@ -13,9 +13,16 @@ const postLogin: RequestHandler = async (req, res, next) => {
     res.redirect('/');
 }
 
+const postLogout: RequestHandler = async (req, res, next) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+}
+
 const AuthCtrl = {
-    getLogin: getLogin,
-    postLogin: postLogin
+    getLogin,
+    postLogin,
+    postLogout
 }
 
 export default AuthCtrl;
