@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import ConnectMongoDBSession from 'connect-mongodb-session';
 import csurf from 'csurf';
+import flash from 'connect-flash';
 
 import adminRouter from './src/modules/admin/admin.routes';
 import shopRouter from './src/modules/shop/shop.routes';
@@ -37,6 +38,7 @@ app.use(session({
 }));
 
 app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
     const authstate = (req.session as any).isLoggedIn;

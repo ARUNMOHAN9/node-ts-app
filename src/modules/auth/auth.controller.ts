@@ -3,9 +3,11 @@ import bcyrpt from 'bcryptjs';
 import User from '../../utilities/models/user.model';
 
 const getLogin: RequestHandler = async (req, res, next) => {
+    const errMsg = req.flash('error')?.join('/n');
     res.render('auth/login', {
         pageTitle: 'Login',
-        path: '/login'
+        path: '/login',
+        errorMessage: errMsg
     });
 }
 
@@ -27,9 +29,11 @@ const postLogin: RequestHandler = async (req, res, next) => {
                     console.log(err);
                 });
             } else {
+                req.flash('error', 'Invalid credentials');
                 return res.redirect('/login');
             }
         } else {
+            req.flash('error', 'Invalid credentials');
             return res.redirect('/login');
         }
     } catch (error) {
@@ -39,9 +43,11 @@ const postLogin: RequestHandler = async (req, res, next) => {
 }
 
 const getSignup: RequestHandler = async (req, res, next) => {
+    const errMsg = req.flash('error')?.join('/n');
     res.render('auth/signup', {
         pageTitle: 'Sign Up',
-        path: '/signup'
+        path: '/signup',
+        errorMessage: errMsg
     });
 }
 
@@ -52,6 +58,7 @@ const postSignup: RequestHandler = async (req, res, next) => {
 
         const userDoc = await User.findOne({ email: email });
         if (userDoc || (password !== confirmPassword)) {
+            req.flash('error', 'Invalid user details');
             return res.redirect('/signup');
         }
 
