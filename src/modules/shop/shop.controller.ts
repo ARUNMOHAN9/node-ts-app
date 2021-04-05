@@ -10,8 +10,7 @@ const getProducts: RequestHandler = async (req, res, next) => {
         res.render('shop/product-list', {
             prods: products,
             pageTitle: 'All Products',
-            path: '/products',
-            isAuthenticated: req.session!.isLoggedIn
+            path: '/products'
         });
     } catch (error) {
         console.log(error);
@@ -32,8 +31,7 @@ const getProduct: RequestHandler = async (req, res, next) => {
             res.render('shop/product-detail', {
                 product: product,
                 pageTitle: 'product.title',
-                path: '/products',
-                isAuthenticated: req.session!.isLoggedIn
+                path: '/products'
             });
         }
     } catch (error) {
@@ -62,8 +60,7 @@ const getCart: RequestHandler = async (req, res, next) => {
         res.render('shop/cart', {
             path: '/cart',
             pageTitle: 'Your Cart',
-            products: products,
-            isAuthenticated: req.session!.isLoggedIn
+            products: products
         });
     } catch (error) {
         console.log(error)
@@ -133,8 +130,7 @@ const getOrders: RequestHandler = async (req, res, next) => {
         res.render('shop/orders', {
             path: '/orders',
             pageTitle: 'Your Orders',
-            orders: orders,
-            isAuthenticated: req.session!.isLoggedIn
+            orders: orders
         });
     } catch (error) {
         console.log(error);
@@ -144,8 +140,7 @@ const getOrders: RequestHandler = async (req, res, next) => {
 const getCheckout: RequestHandler = async (req, res, next) => {
     res.render('shop/checkout', {
         path: '/checkout',
-        pageTitle: 'Checkout',
-        isAuthenticated: req.session!.isLoggedIn
+        pageTitle: 'Checkout'
     });
 };
 
