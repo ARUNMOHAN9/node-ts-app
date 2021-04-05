@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import authValidate from '../../middlewares/auth-validate';
 import ShopCtrl from './shop.controller';
 
 const router = Router();
@@ -9,16 +10,16 @@ router.get('/products', ShopCtrl.getProducts);
 
 router.get('/products/:productId', ShopCtrl.getProduct);
 
-router.get('/cart', ShopCtrl.getCart);
+router.get('/cart', authValidate, ShopCtrl.getCart);
 
-router.post('/cart', ShopCtrl.postCart);
+router.post('/cart', authValidate, ShopCtrl.postCart);
 
-router.get('/orders', ShopCtrl.getOrders);
+router.get('/orders', authValidate, ShopCtrl.getOrders);
 
-router.post('/create-order', ShopCtrl.postOrder);
+router.post('/create-order', authValidate, ShopCtrl.postOrder);
 
-// router.get('/checkout', ShopCtrl.getCheckout);
+// router.get('/checkout',authValidate, ShopCtrl.getCheckout);
 
-router.post('/cart-delete-item', ShopCtrl.postCartDeleteProduct);
+router.post('/cart-delete-item', authValidate, ShopCtrl.postCartDeleteProduct);
 
 export default router;
