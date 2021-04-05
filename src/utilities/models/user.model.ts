@@ -2,7 +2,7 @@ import { model, Schema, Document, Model } from 'mongoose';
 import { IProduct } from './product.model';
 
 export interface IUser extends Document {
-    name: string;
+    password: string;
     email: string;
     cart: any;
     addToCart: (product: IProduct) => Promise<IUser>;
@@ -11,7 +11,7 @@ export interface IUser extends Document {
 }
 
 const UserSchema: Schema<IUser> = new Schema({
-    name: {
+    password: {
         type: String,
         required: true
     },

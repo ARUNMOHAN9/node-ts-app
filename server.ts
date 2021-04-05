@@ -63,20 +63,9 @@ app.use("*", (req, res) => {
 mongoose.connect("mongodb+srv://root:admin%40123@cluster0.kajhf.mongodb.net/shop?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(_ => {
-    User.findOne().then(user => {
-        if (!user) {
-            const user = new User({
-                name: 'Max',
-                email: 'max@test.com',
-                cart: {
-                    items: []
-                }
-            });
-            user.save();
-        }
-    }).then(_ => {
+})
+    .then(_ => {
         console.log(`⚡️[server]: Server is running at https://localhost:3000`);
         app.listen(3000);
-    });
-}).catch(err => console.log(err))
+    })
+    .catch(err => console.log(err));
