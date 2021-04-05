@@ -11,7 +11,7 @@ const getProducts: RequestHandler = async (req, res, next) => {
             prods: products,
             pageTitle: 'All Products',
             path: '/products',
-            isAuthenticated: req.isLoggedIn
+            isAuthenticated: req.session!.isLoggedIn
         });
     } catch (error) {
         console.log(error);
@@ -33,7 +33,7 @@ const getProduct: RequestHandler = async (req, res, next) => {
                 product: product,
                 pageTitle: 'product.title',
                 path: '/products',
-                isAuthenticated: req.isLoggedIn
+                isAuthenticated: req.session!.isLoggedIn
             });
         }
     } catch (error) {
@@ -49,8 +49,7 @@ const getIndex: RequestHandler = async (req, res, next) => {
         res.render('shop/index', {
             prods: products,
             pageTitle: 'Shop',
-            path: '/',
-            isAuthenticated: req.isLoggedIn
+            path: '/'
         });
     } catch (error) {
         console.log(error)
@@ -64,7 +63,7 @@ const getCart: RequestHandler = async (req, res, next) => {
             path: '/cart',
             pageTitle: 'Your Cart',
             products: products,
-            isAuthenticated: req.isLoggedIn
+            isAuthenticated: req.session!.isLoggedIn
         });
     } catch (error) {
         console.log(error)
@@ -111,7 +110,7 @@ const postOrder: RequestHandler = async (req, res, next) => {
 
         const order = new Order({
             user: {
-                name: req.user.email,
+                email: req.user.email,
                 userId: req.user
             },
             products: products
@@ -135,7 +134,7 @@ const getOrders: RequestHandler = async (req, res, next) => {
             path: '/orders',
             pageTitle: 'Your Orders',
             orders: orders,
-            isAuthenticated: req.isLoggedIn
+            isAuthenticated: req.session!.isLoggedIn
         });
     } catch (error) {
         console.log(error);
@@ -146,7 +145,7 @@ const getCheckout: RequestHandler = async (req, res, next) => {
     res.render('shop/checkout', {
         path: '/checkout',
         pageTitle: 'Checkout',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session!.isLoggedIn
     });
 };
 

@@ -6,7 +6,7 @@ const getLogin: RequestHandler = async (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
         path: '/login',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session!.isLoggedIn
     });
 }
 
@@ -43,7 +43,7 @@ const getSignup: RequestHandler = async (req, res, next) => {
     res.render('auth/signup', {
         pageTitle: 'Sign Up',
         path: '/signup',
-        isAuthenticated: req.isLoggedIn
+        isAuthenticated: req.session!.isLoggedIn
     });
 }
 

@@ -4,6 +4,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import ConnectMongoDBSession from 'connect-mongodb-session';
+import csurf from 'csurf';
 
 import adminRouter from './src/modules/admin/admin.routes';
 import shopRouter from './src/modules/shop/shop.routes';
@@ -20,6 +21,8 @@ const store = new MongoDbSore({
     collection: 'sessions'
 });
 
+const csrfProtection = csurf();
+
 app.set('view engine', 'ejs');
 app.set('views', 'src/views');
 
@@ -33,9 +36,11 @@ app.use(session({
     store: store
 }));
 
+app.use(csrfProtection);
+
 app.use((req, res, next) => {
     const authstate = (req.session as any).isLoggedIn;
-    req.isLoggedIn = authstate === true;
+    req.session!.isLoggedIn = authstate === true;
     next();
 });
 
@@ -50,6 +55,13 @@ app.use((req, res, next) => {
         })
         .catch(err => console.log(err))
         .finally(() => next());
+});
+
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session?.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+
+    next();
 });
 
 app.use('/admin', adminRouter);
