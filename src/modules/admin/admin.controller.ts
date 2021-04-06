@@ -64,6 +64,11 @@ const postEditProduct: RequestHandler = async (req, res, next) => {
         const product = await Product.findById(prodId);
 
         if (product) {
+
+            if (product.userId.toString() !== req.user._id.toString()) {
+                return res.redirect('/');
+            }
+
             product.title = req.body.title;
             product.imageUrl = req.body.imageUrl;
             product.price = +req.body.price;
@@ -82,7 +87,7 @@ const postDeleteProduct: RequestHandler = async (req, res, next) => {
     try {
         const prodId = req.body.productId;
 
-        await Product.findByIdAndRemove(prodId);
+        await Product.deleteOne({ _id: prodId, userId: req.user?._id });
 
         res.redirect('/admin/products');
     } catch (error) {
@@ -94,7 +99,7 @@ const postDeleteProduct: RequestHandler = async (req, res, next) => {
 const getProducts: RequestHandler = async (req, res, next) => {
 
     try {
-        const products = await Product.find();
+        const products = await Product.find({ userId: req.user._id });
         res.render('admin/products', {
             prods: products,
             pageTitle: 'Admin Products',
