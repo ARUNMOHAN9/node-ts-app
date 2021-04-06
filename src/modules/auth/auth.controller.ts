@@ -1,6 +1,10 @@
 import { RequestHandler } from 'express';
 import bcyrpt from 'bcryptjs';
+import crypto from 'crypto';
+
 import User from '../../utilities/models/user.model';
+import { sendMail } from '../../utilities/helpers/email-trigger';
+import { resolve } from 'path';
 
 const getLogin: RequestHandler = async (req, res, next) => {
     const errMsg = req.flash('error')?.join('/n');
@@ -72,6 +76,13 @@ const postSignup: RequestHandler = async (req, res, next) => {
 
         await user.save();
         res.redirect('/login');
+
+        return sendMail({
+            from: 'Excited User <me@samples.mailgun.org>',
+            to: 'arwebdev233@gmail.com',
+            subject: 'Registration successful',
+            html: '<h1>You have successfully signed up!</h1>'
+        });
     } catch (error) {
         console.log(error);
     }
@@ -83,12 +94,106 @@ const postLogout: RequestHandler = async (req, res, next) => {
     });
 }
 
+const getReset: RequestHandler = async (req, res, next) => {
+    const errMsg = req.flash('error')?.join('/n');
+
+    res.render('auth/reset', {
+        pageTitle: 'Reset',
+        path: '/reset',
+        errorMessage: errMsg
+    })
+}
+
+const postReset: RequestHandler = async (req, res, next) => {
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            console.log(err);
+            return res.redirect('/reset');
+        }
+
+        const token = buffer.toString('hex');
+
+        User.findOne({ email: req.body.email })
+            .then(user => {
+                if (!user) {
+                    req.flash('error', 'No account with the given mailId');
+                    res.redirect('/reset');
+                } else {
+                    user.resetToken = token;
+                    user.resetTokenExpiration = Date.now() + 3600000;
+                    user.save();
+                    resolve();
+                }
+            })
+            .then(() => {
+                res.redirect('/');
+                sendMail({
+                    from: 'Excited User <me@samples.mailgun.org>',
+                    to: 'arwebdev233@gmail.com',
+                    subject: 'Reset password',
+                    html: `
+                    <p>You requested a password reset</p>
+                    <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+                    `
+                });
+            })
+            .catch(err => console.log(err));
+    });
+}
+
+const getNewPassword: RequestHandler = async (req, res, next) => {
+    try {
+        const errMsg = req.flash('error')?.join('/n');
+        const token = req.params.token;
+        const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
+
+        if (!user) {
+            return res.redirect('/reset');
+        } else {
+            res.render('auth/new-password', {
+                pageTitle: 'New Password',
+                path: '/new-password',
+                errorMessage: errMsg,
+                userId: user._id.toString(),
+                passwordToken: token
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const postNewPassword: RequestHandler = async (req, res, next) => {
+    try {
+        const body = req.body;
+
+        const { newPassword, userId, passwordToken } = body;
+
+        const user = await User.findOne({ resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() }, _id: userId });
+
+        if (user) {
+            const encryptedPass = await bcyrpt.hash(newPassword, 12);
+            user.password = encryptedPass;
+            user.resetToken = undefined;
+            user.resetTokenExpiration = undefined;
+            await user.save();
+            res.redirect('/login');
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const AuthCtrl = {
     getLogin,
     postLogin,
     getSignup,
     postSignup,
-    postLogout
+    postLogout,
+    getReset,
+    postReset,
+    getNewPassword,
+    postNewPassword
 }
 
 export default AuthCtrl;

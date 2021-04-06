@@ -5,6 +5,8 @@ export interface IUser extends Document {
     password: string;
     email: string;
     cart: any;
+    resetToken?: string;
+    resetTokenExpiration?: number;
     addToCart: (product: IProduct) => Promise<IUser>;
     removeFromCart: (productId: number) => Promise<IUser>;
     clearCart: () => Promise<IUser>;
@@ -19,6 +21,8 @@ const UserSchema: Schema<IUser> = new Schema({
         type: String,
         required: true
     },
+    resetToken: String,
+    resetTokenExpiration: Number,
     cart: {
         items: [
             {
