@@ -1,10 +1,12 @@
 import { RequestHandler } from 'express';
 import bcyrpt from 'bcryptjs';
 import crypto from 'crypto';
+import { validationResult } from 'express-validator';
 
 import User from '../../utilities/models/user.model';
 import { sendMail } from '../../utilities/helpers/email-trigger';
 import { resolve } from 'path';
+import HttpStatus from '../../utilities/enums/http-status.enum';
 
 const getLogin: RequestHandler = async (req, res, next) => {
     const errMsg = req.flash('error')?.join('/n');
@@ -60,10 +62,13 @@ const postSignup: RequestHandler = async (req, res, next) => {
         const body = req.body;
         const { email, password, confirmPassword } = body;
 
-        const userDoc = await User.findOne({ email: email });
-        if (userDoc || (password !== confirmPassword)) {
-            req.flash('error', 'Invalid user details');
-            return res.redirect('/signup');
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(HttpStatus.BAD_REQUEST).render('auth/signup', {
+                pageTitle: 'Sign Up',
+                path: '/signup',
+                errorMessage: errors.array()[0].msg
+            });
         }
 
         const encryptedPass = await bcyrpt.hash(password, 12);

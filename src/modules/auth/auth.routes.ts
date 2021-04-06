@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { body, check } from 'express-validator';
+import User from '../../utilities/models/user.model';
 import AuthCtrl from './auth.controller';
 
 const router = Router();
@@ -9,7 +11,26 @@ router.post('/login', AuthCtrl.postLogin);
 
 router.get('/signup', AuthCtrl.getSignup);
 
-router.post('/signup', AuthCtrl.postSignup);
+router.post('/signup', [
+    check('email')
+        .isEmail()
+        .withMessage('Please enter a valid email')
+        .custom(async (value, { req }) => {
+            const userDoc = await User.findOne({ email: value });
+            if (userDoc) {
+                return Promise.reject('Email already exists, pick a different one')
+            }
+        }),
+    body('password', 'Password must contain only numbers and text and atleast 5 characters')
+        .isLength({ min: 5 })
+        .isAlphanumeric(),
+    body('confirmPassword').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Passwords have to match!');
+        }
+        return true;
+    })
+], AuthCtrl.postSignup);
 
 router.post('/logout', AuthCtrl.postLogout);
 
