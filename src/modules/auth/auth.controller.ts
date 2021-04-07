@@ -13,7 +13,13 @@ const getLogin: RequestHandler = async (req, res, next) => {
     res.render('auth/login', {
         pageTitle: 'Login',
         path: '/login',
-        errorMessage: errMsg
+        errorMessage: errMsg,
+        oldInput: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+        },
+        validationErrors: []
     });
 }
 
@@ -53,7 +59,13 @@ const getSignup: RequestHandler = async (req, res, next) => {
     res.render('auth/signup', {
         pageTitle: 'Sign Up',
         path: '/signup',
-        errorMessage: errMsg
+        errorMessage: errMsg,
+        oldInput: {
+            email: '',
+            password: '',
+            confirmPassword: ''
+        },
+        validationErrors: []
     });
 }
 
@@ -67,7 +79,13 @@ const postSignup: RequestHandler = async (req, res, next) => {
             return res.status(HttpStatus.BAD_REQUEST).render('auth/signup', {
                 pageTitle: 'Sign Up',
                 path: '/signup',
-                errorMessage: errors.array()[0].msg
+                errorMessage: errors.array()[0].msg,
+                oldInput: {
+                    email,
+                    password,
+                    confirmPassword
+                },
+                validationErrors: errors.array()
             });
         }
 
