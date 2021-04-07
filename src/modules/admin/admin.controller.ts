@@ -1,11 +1,15 @@
 import { RequestHandler } from 'express';
+import { validationResult } from 'express-validator';
 import Product from '../../utilities/models/product.model';
 
 const getAddProduct: RequestHandler = async (req, res, next) => {
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
-        editing: false
+        editing: false,
+        hasError: false,
+        errorMessage: null,
+        validationErrors: []
     });
 }
 
@@ -20,6 +24,19 @@ const postAddProduct: RequestHandler = async (req, res, next) => {
             description: req.body.description,
             userId: req.user
         });
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.render('admin/edit-product', {
+                pageTitle: 'Add Product',
+                path: '/admin/edit-product',
+                editing: false,
+                hasError: true,
+                product: product,
+                errorMessage: errors.array()[0].msg,
+                validationErrors: errors.array()
+            });
+        }
 
         await product.save();
 
@@ -45,11 +62,14 @@ const getEditProduct: RequestHandler = async (req, res, next) => {
             return res.redirect('/');
         }
 
-        res.render('admin/edit-product', {
+        return res.render('admin/edit-product', {
             pageTitle: 'Edit Product',
             path: '/admin/edit-product',
             editing: editMode,
-            product: product
+            product: product,
+            hasError: false,
+            errorMessage: null,
+            validationErrors: []
         });
     } catch (error) {
         console.log(error);

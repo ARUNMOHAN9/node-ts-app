@@ -7,7 +7,12 @@ const router = Router();
 
 router.get('/login', AuthCtrl.getLogin);
 
-router.post('/login', AuthCtrl.postLogin);
+router.post('/login', [
+    body('email')
+        .isEmail()
+        .withMessage('Please enter a valid email')
+        .normalizeEmail()
+], AuthCtrl.postLogin);
 
 router.get('/signup', AuthCtrl.getSignup);
 
@@ -23,13 +28,14 @@ router.post('/signup', [
         }),
     body('password', 'Password must contain only numbers and text and atleast 5 characters')
         .isLength({ min: 5 })
-        .isAlphanumeric(),
+        .isAlphanumeric()
+        .trim(),
     body('confirmPassword').custom((value, { req }) => {
-        if (value !== req.body.password) {
+        if (value.trim() !== req.body.password) {
             throw new Error('Passwords have to match!');
         }
         return true;
-    })
+    }).trim()
 ], AuthCtrl.postSignup);
 
 router.post('/logout', AuthCtrl.postLogout);
