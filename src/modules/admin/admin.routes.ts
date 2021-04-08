@@ -15,8 +15,6 @@ router.post('/add-product', authValidate, [
         .isString()
         .isLength({ min: 3 })
         .trim(),
-    body('imageUrl')
-        .isURL(),
     body('price')
         .isNumeric(),
     body('description')
@@ -31,8 +29,6 @@ router.post('/edit-product', authValidate, [
         .isString()
         .isLength({ min: 3 })
         .trim(),
-    body('imageUrl')
-        .isURL(),
     body('price')
         .isNumeric(),
     body('description')
